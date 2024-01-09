@@ -1,6 +1,5 @@
 import { React, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 
 const Login = () => {
@@ -25,7 +24,7 @@ const Login = () => {
           </p>
 
           <form>
-            {/* Form fields */}
+            {/* ============================== Email ============================= */}
             <div className="mb-4">
               <label htmlFor="email" className="sr-only">
                 Email
@@ -42,6 +41,7 @@ const Login = () => {
               />
             </div>
 
+            {/* ============================== Password ============================= */}
             <div className="relative mb-4">
               <label htmlFor="password" className="sr-only">
                 Password
@@ -57,6 +57,7 @@ const Login = () => {
                 id="password"
                 placeholder="Password"
               />
+              {/* ============================== Password Visibility ============================= */}
               {visible ? (
                 <AiOutlineEye
                   className="absolute inset-y-2 right-2"
@@ -76,6 +77,7 @@ const Login = () => {
                 <input
                   id="remember-me"
                   type="checkbox"
+                  name="remember-me"
                   className="h-4 w-4 text-blue-600"
                 />
                 <label
@@ -85,9 +87,11 @@ const Login = () => {
                   Remember Me
                 </label>
               </div>
+
+              {/* ============================== Forgot Password ============================= */}
               <a
                 href=".forgot-password"
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-blue-600 cursor-pointer underline-none"
               >
                 Forgot Password?
               </a>
