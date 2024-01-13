@@ -3,12 +3,13 @@ const app = express();
 const ErrorHandler = require("./utils/ErrorHandler");
 const cookieParser = require("cookie-parser")
 const bodyParser = require('body-parser')
-const fileUpload = require('express-fileupload')
+const user = require("./controller/user")
+
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(fileUpload({useTempFiles: true}))
+app.use("/",express.static("uploads"));
 
 
 /* ============================== CONFIG ============================= */
@@ -21,5 +22,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 /* ============================== FOR ERRORHANDLING ============================= */
 app.use(ErrorHandler)
 
+
+app.use("api/v2/user",user)
 
 module.exports = app;
