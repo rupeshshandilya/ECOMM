@@ -31,6 +31,6 @@ function errorHandler (err, req, res, next) {
 app.use(errorHandler)
 
 
-app.use("api/v2/user",user)
+app.use("/api/v2/user",user)
 
 module.exports = app;
