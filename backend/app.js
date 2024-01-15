@@ -21,8 +21,14 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
+function errorHandler (err, req, res, next) {
+  res.status(500)
+  res.render('error', { error: err })
+}
+
+
 /* ============================== FOR ERRORHANDLING ============================= */
-app.use(ErrorHandler)
+app.use(errorHandler)
 
 
 app.use("api/v2/user",user)
