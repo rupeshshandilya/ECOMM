@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const ErrorHandler = require("./utils/ErrorHandler");
+const ErrorHandler = require("./middleware/error");
 const cookieParser = require("cookie-parser")
 const bodyParser = require('body-parser')
 const user = require("./controller/user")
@@ -21,14 +21,14 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-function errorHandler (err, req, res, next) {
-  res.status(500)
-  res.render('error', { error: err })
-}
+// function errorHandler (err, req, res, next) {
+//   res.status(500)
+//   res.render('error', { error: err })
+// }
 
 
 /* ============================== FOR ERRORHANDLING ============================= */
-app.use(errorHandler)
+app.use(ErrorHandler)
 
 
 app.use("/api/v2/user",user)
