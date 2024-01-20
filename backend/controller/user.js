@@ -7,6 +7,8 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
+const catchAsyncErrors = require('../middleware/catchAsyncError')
+const sendToken = require('../utils/jwtToken');
 
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
@@ -20,9 +22,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       fs.unlink(fielpath, (err) => {
         if (err) {
           res.status(500).json({ message: "Error in deleting file" });
-        } else {
-          res.json({ message: "file deleted successfully" });
-        }
+        } 
       });
       return next(new ErrorHandler("User already exists", 400));
     }
@@ -38,13 +38,14 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       avatar: fileUrl,
     };
 
-    //uploading data to database
+    // uploading data to database
     // const newUser = await User.create(user);
     // res.status(201).json({
     //     success: true,
     //     newUser,
     // });
     const activationToken = createActivationToken(user);
+    console.log(activationToken);
 
     const activationUrl = `http://localhost:5173/activation/${activationToken}`;
 
@@ -68,9 +69,41 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
 const createActivationToken = (user) => {
     return jwt.sign(user, process.env.ACTIVATION_SECRET, {
-        //after 10min user can't verify mail 
-        expiresIn: "10m",
+        //after 5min user can't verify mail 
+        expiresIn: "5m",
     })
 }
+
+//activate token
+router.post("/activation", catchAsyncErrors(async(req,res,next) => {
+  try {
+    const {activation_token} = req.body;
+
+    const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+
+    if(!newUser){
+      return next(new ErrorHandler("Invalid Token", 400));
+    }
+
+    const {name, email, password, avatar} = newUser;
+
+    //to check wether user already exist or not
+    let user = await User.findOne({email});
+    if(user){
+      return next(new ErrorHandler("User Already Exist",400))
+    }
+
+    user = await User.create({
+      name,
+      email,
+      password,
+      avatar
+    })
+
+    sendToken(user, 201, res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500)); 
+  }
+}))
 
 module.exports = router;
